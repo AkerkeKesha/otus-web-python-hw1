@@ -32,9 +32,9 @@ def get_top_verbs_in_path(path, top_size=10):
     global Path
     Path = path
     trees = [t for t in get_trees(None) if t]
-    fncs = [f for f in flat([[node.name.lower() for node in ast.walk(t) if isinstance(node, ast.FunctionDef)] for t in trees]) if not (f.startswith('__') and f.endswith('__'))]
+    fncs = [f for f in flatten([[node.name.lower() for node in ast.walk(t) if isinstance(node, ast.FunctionDef)] for t in trees]) if not (f.startswith('__') and f.endswith('__'))]
     print('functions extracted')
-    verbs = flat([get_verbs_from_function_name(function_name) for function_name in fncs])
+    verbs = flatten([get_verbs_from_function_name(function_name) for function_name in fncs])
     return collections.Counter(verbs).most_common(top_size)
 
 
@@ -68,9 +68,11 @@ def get_trees(_path, with_filenames=False, with_file_content=False):
     return trees
 
 
-def flat(_list):
-    """ [(1,2), (3,4)] -> [1, 2, 3, 4]"""
-    return sum([list(item) for item in _list], [])
+def flatten(lst):
+    """
+    This function flattens a list of tuples for one level
+    """
+    return sum([list(item) for item in lst], [])
 
 
 def get_verbs_from_function_name(function_name):
