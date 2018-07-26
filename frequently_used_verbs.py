@@ -5,12 +5,8 @@ import collections
 from nltk import pos_tag
 
 
-
 PATH = ''
 TOP_SIZE = 200
-
-if__name__== "__main__":
-    main()
 
 
 def main():
@@ -86,3 +82,7 @@ def is_verb(word):
         return False
     pos_info = pos_tag([word])
     return pos_info[0][1] == 'VB'
+
+
+if __name__== "__main__":
+    main()
