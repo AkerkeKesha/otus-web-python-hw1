@@ -7,11 +7,7 @@ from nltk import pos_tag
 
 PATH = ''
 TOP_SIZE = 200
-
-
-def main():
-    words = []
-    projects = [
+PROJECTS = [
         'django',
         'flask',
         'pyramid',
@@ -19,7 +15,11 @@ def main():
         'requests',
         'sqlalchemy',
     ]
-    for project in projects:
+
+def main():
+    words = []
+
+    for project in PROJECTS:
         path = os.path.join('.', project)
         words += get_top_verbs_in_path(path)
 
