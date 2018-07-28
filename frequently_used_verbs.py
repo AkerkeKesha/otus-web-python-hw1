@@ -35,26 +35,37 @@ def main():
 
 
 def get_top_verbs_in_path(path, top_size=10):
-    global PATH
-    PATH = path
-    trees = [t for t in get_trees(None) if t]
+    trees = [t for t in get_trees(path) if t]
     functions = [f for f in flatten([[node.name.lower() for node in ast.walk(t) if isinstance(node, ast.FunctionDef)] for t in trees]) if not (f.startswith('__') and f.endswith('__'))]
     print('functions extracted')
     verbs = flatten([get_verbs_from_function_name(function_name) for function_name in functions])
     return collections.Counter(verbs).most_common(top_size)
 
 
-def get_trees(_path, with_filenames=False, with_file_content=False):
-    filenames = []
+def get_trees(path, with_filenames=False, with_file_content=False):
+    filenames = find_python_files(path=path, limit=100)
+    print('total %s files' % len(filenames))
     trees = []
     path = PATH
-    for dirname, dirs, files in os.walk(path, topdown=True):
-        filenames = get_filenames_from_path_with_extension(filenames, dirname, files, 100, '.py')
-    print('total %s files' % len(filenames))
     for filename in filenames:
         trees = generate_trees(filename, tree, with_filenames, with_file_content)
     print('trees generated')
     return trees
+
+
+def find_python_files(path, limit):
+    filenames = []
+    for dirname, _, files in os.walk(path, topdown=True):
+        if len(filenames) >= limit:
+            break
+        python_files = custom_file_filter(files=files, dirname=dirname, extension=".py", )
+        filenames.extend(python_files)
+    return filenames[:limit]
+
+
+def custom_file_filter(files, dirname, extension=".py"):
+    return [os.path.join(dirname, file)
+                for f in files if f.endswith(extension)]
 
 
 def generate_trees(filename, tree, with_filenames, with_file_content):
@@ -77,18 +88,6 @@ def generate_trees(filename, tree, with_filenames, with_file_content):
     else:
         trees.append(tree)
     return trees
-
-
-def get_filenames_from_path_with_extension(filenames, dirname, files, limit, extension):
-    """
-        This function returns filenames, max 100 given path and extension
-    """
-    for file in files:
-        if file.endswith(extension):
-            filenames.append(os.path.join(dirname, file))
-            if len(filenames) == limit:
-                break
-    return filenames
 
 
 def flatten(lst):
