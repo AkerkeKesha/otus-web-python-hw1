@@ -19,8 +19,8 @@ PROJECTS = [
 
 def main():
     """
-        This program outputs most frequently used verbs in the verb itself and occurence duo
-        for given project names in a directory
+    This program outputs most frequently used verbs in the verb itself and occurence duo
+    for given project names in a directory
     """
     words = []
 
@@ -60,12 +60,10 @@ def get_trees(path, with_filenames=False, with_file_content=False):
     """
     This function generates trees of all filenames in a given path
     """
+    path = PATH
     filenames = find_python_files(path=path, limit=100)
     print('total %s files' % len(filenames))
-    trees = []
-    path = PATH
-    for filename in filenames:
-        trees = generate_trees(filename, tree, with_filenames, with_file_content)
+    trees = generate_trees(filenames=filenames, with_filenames=False, with_file_content=False)
     print('trees generated')
     return trees
 
@@ -98,25 +96,26 @@ def custom_file_filter(files, dirname, extension=".py"):
                 for f in files if f.endswith(extension)]
 
 
-def generate_trees(filename, tree, with_filenames, with_file_content):
+def generate_trees(filenames, with_filenames, with_file_content):
     """
     This function returns generates tree of filenames
     """
     trees = []
-    with open(filename, 'r', encoding='utf-8') as attempt_handler:
-        main_file_content = attempt_handler.read()
-    try:
-        tree = ast.parse(main_file_content)
-    except SyntaxError as e:
-        print(e)
-        tree = None
-    if with_filenames:
-        if with_file_content:
-            trees.append((filename, main_file_content, tree))
+    for filename in filenames:
+        with open(filename, 'r', encoding='utf-8') as attempt_handler:
+            main_file_content = attempt_handler.read()
+        try:
+            tree = ast.parse(main_file_content)
+        except SyntaxError as e:
+            print(e)
+            tree = None
+        if with_filenames:
+            if with_file_content:
+                trees.append((filename, main_file_content, tree))
+            else:
+                trees.append((filename, tree))
         else:
-            trees.append((filename, tree))
-    else:
-        trees.append(tree)
+            trees.append(tree)
     return trees
 
 
