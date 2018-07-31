@@ -1,20 +1,20 @@
+# coding=utf-8
 import ast
 import os
 import collections
 
 from nltk import pos_tag
+'''
+- Надо бы сделать человеческое ридми, где описано, как установить и использовать библиотеку) 
+X Глобальные переменные - не очень хорошее дело. Всё это можно получать из аргументов или в крайнем случае задавать так же, но в if __name__ == "__main__") 
+- Дебажные принты хорошо бы удалить, а информационные заменить логированием
+- проблема функции generate_trees в том, что они возвращает результат в различном формате в зависимости от аргументов - то кортеж из 2 или 3 элементов, то просто деревья. Это очень неудобно, если потребуется ее где-то переиспользовать
+X В nltk глагол – не только VB , есть и другие тэги
+- Докстринги не всегда хорошо, они устаревают оч быстро и часто дублирую информацию. Вот бы ту же инфу запихать в код, а докстринги поудалять
+- ужасно длинная строчка) https://github.com/AkerkeKesha/otus-web-python-hw1/blob/8ab643ea11df77229f07d7de694b3bcc9339d37d/frequently_used_verbs.py#L44
+- В одном файле куча всего: и функции с бизнес-логикой и мелкие хелперы. Можно их на разные файлы разложить) 
 
-
-PATH = ''
-TOP_SIZE = 200
-PROJECTS = [
-        'django',
-        'flask',
-        'pyramid',
-        'reddit',
-        'requests',
-        'sqlalchemy',
-    ]
+'''
 
 
 def main():
@@ -53,7 +53,7 @@ def is_special_function():
     This function checks if a function is special or not
     :return: True/False
     """
-    return (f.startswith('__') and f.endswith('__'))
+    return f.startswith('__') and f.endswith('__')
 
 
 def get_trees(path, with_filenames=False, with_file_content=False):
@@ -63,7 +63,7 @@ def get_trees(path, with_filenames=False, with_file_content=False):
     path = PATH
     filenames = find_python_files(path=path, limit=100)
     print('total %s files' % len(filenames))
-    trees = generate_trees(filenames=filenames, with_filenames=False, with_file_content=False)
+    trees = generate_trees(filenames=filenames, with_filenames=with_filenames, with_file_content=with_file_content)
     print('trees generated')
     return trees
 
@@ -140,8 +140,20 @@ def is_verb(word):
     if not word:
         return False
     pos_info = pos_tag([word])
-    return pos_info[0][1] == 'VB'
+    return 'VB' in pos_info[0][1]
 
 
 if __name__== "__main__":
+
+    PATH = ''
+    TOP_SIZE = 200
+    PROJECTS = [
+        'django',
+        'flask',
+        'pyramid',
+        'reddit',
+        'requests',
+        'sqlalchemy',
+    ]
+
     main()
