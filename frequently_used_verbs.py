@@ -2,8 +2,7 @@
 import ast
 import os
 import collections
-
-from nltk import pos_tag
+import logging
 
 import helper
 
@@ -34,6 +33,17 @@ def main():
         'requests',
         'sqlalchemy',
     ]
+    # source for logging : https://fangpenlin.com/posts/2012/08/26/good-logging-practice-in-python/
+
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.DEBUG)
+
+    handler = logging.FileHandler('frequently_used_verbs.log')
+    handler.setLevel(logging.DEBUG)
+
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
 
     words = []
 
@@ -53,7 +63,7 @@ def get_top_verbs_in_path(path, top_size=10):
     trees = [t for t in get_trees(path) if t]
     flattened_list = helper.transform_to_list(trees)
     functions = [f for f in flattened_list if not helper.is_special_function()]
-    print('functions extracted')
+    logging.debug('functions extracted')
     verbs = helper.flatten([get_verbs_from_function_name(function_name) for function_name in functions])
     return collections.Counter(verbs).most_common(top_size)
 
@@ -70,9 +80,9 @@ def get_trees(path, with_filenames=False, with_file_content=False):
     This function generates trees of all filenames in a given path
     """
     filenames = find_python_files(path=path, limit=100)
-    print('total %s files' % len(filenames))
+    logging.debug('total %s files' % len(filenames))
     trees = generate_trees(filenames=filenames, with_filenames=with_filenames, with_file_content=with_file_content)
-    print('trees generated')
+    logging.debug('trees generated')
     return trees
 
 
