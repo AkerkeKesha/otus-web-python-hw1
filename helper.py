@@ -1,5 +1,6 @@
 import ast
 import os
+import logging
 
 from nltk import pos_tag
 
@@ -30,4 +31,9 @@ def is_verb(word):
 def custom_file_filter(files, dirname, extension=".py"):
     return [os.path.join(dirname, file)
                 for f in files if f.endswith(extension)]
+
+
+def log_to_file(debug_message):
+    logging.basicConfig(filename='frequently_used_verbs.log', level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', filemode='w')
+    logging.debug(debug_message)
 
