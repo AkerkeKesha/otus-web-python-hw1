@@ -1,6 +1,4 @@
 import ast
-import os
-import collections
 
 from nltk import pos_tag
 
