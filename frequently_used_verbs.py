@@ -28,7 +28,7 @@ def main():
 def get_top_verbs_in_path(path, top_size=10):
     trees = [t for t in get_trees(path) if t]
     flattened_list = helper.transform_to_list(trees)
-    functions = [f for f in flattened_list if not helper.is_special_function()]
+    functions = [f for f in flattened_list if not helper.is_special_function(f)]
     helper.log_to_file('functions extracted')
 
     verbs = helper.flatten([get_verbs_from_function_name(function_name) for function_name in functions])
@@ -42,7 +42,7 @@ def get_verbs_from_function_name(function_name):
 def get_trees(path, with_filenames=False, with_file_content=False):
     filenames = find_python_files(path=path, limit=100)
     helper.log_to_file('total %s files' % len(filenames))
-    trees = generate_trees(filenames=filenames, with_filenames=with_filenames, with_file_content=with_file_content)
+    trees = generate_trees(filenames=filenames)
     helper.log_to_file('trees generated')
     return trees
 
@@ -57,23 +57,13 @@ def find_python_files(path, limit):
     return filenames[:limit]
 
 
-def generate_trees(filenames, with_filenames, with_file_content):
+def generate_trees(filenames):
     trees = []
     for filename in filenames:
         with open(filename, 'r', encoding='utf-8') as attempt_handler:
             main_file_content = attempt_handler.read()
-        try:
-            tree = ast.parse(main_file_content)
-        except SyntaxError as e:
-            print(e)
-            tree = None
-        if with_filenames:
-            if with_file_content:
-                trees.append((filename, main_file_content, tree))
-            else:
-                trees.append((filename, tree))
-        else:
-            trees.append(tree)
+        tree = ast.parse(main_file_content)
+        trees.append(tree)
     return trees
 
 

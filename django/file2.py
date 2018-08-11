@@ -1,0 +1,2 @@
+def obtain():
+    print("hello")

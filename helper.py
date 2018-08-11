@@ -13,7 +13,7 @@ def transform_to_list(trees):
     return flatten(list_of_trees)
 
 
-def is_special_function():
+def is_special_function(f):
     return f.startswith('__') and f.endswith('__')
 
 
@@ -29,7 +29,7 @@ def is_verb(word):
 
 
 def custom_file_filter(files, dirname, extension=".py"):
-    return [os.path.join(dirname, file)
+    return [os.path.join(dirname, f)
                 for f in files if f.endswith(extension)]
 
 
